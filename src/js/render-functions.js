@@ -1,10 +1,8 @@
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
 import { divEl } from "../main.js";
 
 export function createGallery(values) {
     const gallery = values.reduce((acc, value) => {
-        const galleryItem = `<div class="img-card">
+        const galleryItem = `<li class="img-card">
         <a href="${value.largeImageURL}">
         <img src="${value.webformatURL}" alt="${value.tags}" />
         <ul>
@@ -26,18 +24,8 @@ export function createGallery(values) {
         </li>
         </ul>
         </a>
-        </div>`;
+        </li>`;
         return acc + galleryItem;
-    }, "")
-    divEl.insertAdjacentHTML("beforeend", gallery);
-    const galleryGrid = new SimpleLightbox('.gallery-section a', {
-        captions: true,
-        captionSelector: 'img',
-        captionType: 'attr',
-        captionsData: 'alt',
-        captionPosition: 'bottom',
-        captionDelay: 250,
-    });
-    galleryGrid.refresh();
-    return;
+    }, ``);
+    return gallery;
 };
