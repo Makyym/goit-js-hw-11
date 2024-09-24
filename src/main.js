@@ -8,7 +8,15 @@ export const divEl = document.querySelector(".gallery-section");
 const formEl = document.querySelector("form");
 const inputEl = formEl.elements.input;
 const buttonEl = formEl.elements.button;
-const loaderEl = document.querySelector("div");
+const loaderEl = document.querySelector(".loader-element");
+const galleryGrid = new SimpleLightbox('.gallery-section a', {
+    captions: true,
+    captionSelector: 'img',
+    captionType: 'attr',
+    captionsData: 'alt',
+    captionPosition: 'bottom',
+    captionDelay: 250,
+});
 
 function handleSearch(event) {
     event.preventDefault();
@@ -24,35 +32,29 @@ function handleSearch(event) {
         });
     } else {
         divEl.textContent = "";
-        loaderEl.classList.add("loader");
+        loaderEl.classList.replace("non-visible", "is-visible");
         const searchValue = inputEl.value.trim();
         searchFetch(searchValue)
-        .then(images => {
-            if (images.hits.length === 0) {
-                iziToast.error({
-                    backgroundColor: "#EF4040",
-                    progressBarColor: "#FFBEBE",
-                    position: "topCenter",
-                    messageColor: "#FFFFFF",
-                    icon: false,
-                    position: `topRight`,
+            .then(images => {
+                if (images.hits.length === 0) {
+                    iziToast.error({
+                        backgroundColor: "#EF4040",
+                        progressBarColor: "#FFBEBE",
+                        position: "topCenter",
+                        messageColor: "#FFFFFF",
+                        icon: false,
+                        position: `topRight`,
                         message: "Sorry, there are no images matching your search query. Please try again!",
                     });
+                    loaderEl.classList.replace("is-visible", "non-visible");
                     return
                 } else {
                     divEl.insertAdjacentHTML("beforeend", createGallery(images.hits));
-                    const galleryGrid = new SimpleLightbox('.gallery-section a', {
-                        captions: true,
-                        captionSelector: 'img',
-                        captionType: 'attr',
-                        captionsData: 'alt',
-                        captionPosition: 'bottom',
-                        captionDelay: 250,
-                    });
-                    galleryGrid.refresh()
-                }})
-            .catch(error => console.log(error))
-            .finally(loaderEl.classList.remove("loader"))
+                    galleryGrid.refresh();
+                    loaderEl.classList.replace("is-visible", "non-visible");
+                }
+            })
+            .catch(error => console.log(error));
     };
 }
 
